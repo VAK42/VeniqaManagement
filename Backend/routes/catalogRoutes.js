@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getProducts, createProduct, updateProduct, deleteProduct } from '../controllers/catalogController.js';
+import { isAuthenticated, hasPermission } from '../middleware/authMiddleware.js';
+import upload from '../middleware/uploadMiddleware.js';
+const router = Router();
+router.get('/', isAuthenticated, getProducts);
+router.post('/', isAuthenticated, hasPermission('catalogManage'), upload.array('images', 5), createProduct);
+router.put('/:id', isAuthenticated, hasPermission('catalogManage'), updateProduct);
+router.delete('/:id', isAuthenticated, hasPermission('catalogManage'), deleteProduct);
+export default router;

@@ -1,0 +1,15 @@
+import { Router } from 'express';
+import * as controller from '../controllers/referenceDataController.js';
+import { isAuthenticated, hasPermission } from '../middleware/authMiddleware.js';
+const router = Router();
+router.get('/bundle', isAuthenticated, controller.getCatalogBundle);
+router.get('/stores', isAuthenticated, controller.getStores);
+router.get('/roles', isAuthenticated, controller.getRoles);
+router.get('/weights', isAuthenticated, controller.getWeightUnits);
+router.get('/categories', isAuthenticated, hasPermission('categoriesView'), controller.getCategories);
+router.post('/categories', isAuthenticated, hasPermission('categoriesManage'), controller.createCategory);
+router.put('/categories', isAuthenticated, hasPermission('categoriesManage'), controller.updateCategory);
+router.get('/tariffs', isAuthenticated, hasPermission('tariffView'), controller.getTariffs);
+router.post('/tariffs', isAuthenticated, hasPermission('tariffManage'), controller.createTariff);
+router.put('/tariffs', isAuthenticated, hasPermission('tariffManage'), controller.updateTariff);
+export default router;

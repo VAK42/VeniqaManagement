@@ -1,0 +1,14 @@
+import { Router } from 'express';
+import * as controller from '../controllers/authController.js';
+import { isAuthenticated, hasPermission } from '../middleware/authMiddleware.js';
+const router = Router();
+router.post('/login', controller.login);
+router.get('/forgotPassword', controller.forgotPassword);
+router.get('/validatePasswordResetToken/:token', controller.validatePasswordResetToken);
+router.post('/resetPassword', controller.resetPassword);
+router.post('/admin', isAuthenticated, hasPermission('superAdmin'), controller.createAdmin);
+router.get('/admins', isAuthenticated, hasPermission('superAdmin'), controller.getAllAdmins);
+router.get('/admin', isAuthenticated, hasPermission('superAdmin'), controller.getAdminDetails);
+router.put('/admin', isAuthenticated, hasPermission('superAdmin'), controller.updateAdminAccess);
+router.delete('/admin', isAuthenticated, hasPermission('superAdmin'), controller.deleteAdmin);
+export default router;

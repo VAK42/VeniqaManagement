@@ -1,0 +1,15 @@
+import { Router } from 'express';
+import * as controller from '../controllers/orderController.js';
+import { isAuthenticated, hasPermission } from '../middleware/authMiddleware.js';
+const router = Router();
+router.get('/', isAuthenticated, hasPermission('orderView'), controller.getOrders);
+router.get('/:id', isAuthenticated, hasPermission('orderView'), controller.getOrder);
+router.post('/', isAuthenticated, controller.createOrder);
+router.put('/:id/status', isAuthenticated, hasPermission('orderManage'), controller.updateOrderStatus);
+router.post('/fulfill', isAuthenticated, hasPermission('orderManage'), controller.markItemAsFulfilling);
+router.post('/ship', isAuthenticated, hasPermission('orderManage'), controller.markItemAsShipped);
+router.post('/deliver', isAuthenticated, hasPermission('orderManage'), controller.markItemAsDelivered);
+router.post('/comment', isAuthenticated, hasPermission('orderManage'), controller.addComment);
+router.put('/comment', isAuthenticated, hasPermission('orderManage'), controller.editComment);
+router.delete('/comment', isAuthenticated, hasPermission('orderManage'), controller.deleteComment);
+export default router;
