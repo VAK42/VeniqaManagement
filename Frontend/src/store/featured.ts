@@ -1,0 +1,8 @@
+import axios from '@/plugins/axios'
+import proxyUrls from '@/constants/proxyUrls'
+import _ from 'lodash'
+type AnyObj = Record<string, unknown>
+type CommitFn = (mutation: string, payload?: unknown) => void
+type ActionCtx = { commit: CommitFn }
+interface State { masterFeaturedList: AnyObj[]; sections: string[] }
+export default { namespaced: true, state: { masterFeaturedList: [], sections: [] } as State, mutations: { setMasterList(state: State, payload: AnyObj[]) { state.masterFeaturedList = payload }, setSections(state: State, payload: AnyObj[]) { const uniqueNames = _.uniqBy(payload as AnyObj[], 'name'); state.sections = _.map(uniqueNames as AnyObj[], 'name') } }, actions: { async getAllFeaturedList({ commit }: ActionCtx) { try { const { data } = await axios.get(proxyUrls.getAllFeatures); if (data) { commit('setMasterList', data); commit('setSections', data) } } catch (err) { console.log('Error', err); throw err } }, async save(_: ActionCtx, reqObj: AnyObj) { const r = reqObj as AnyObj; const request = { name: r.section as string, content: (r.featuredDesigns as AnyObj[]).map((design: AnyObj) => ({ products: (design.products as AnyObj[]).map((p: AnyObj) => p.id as string), config: design.config })) }; try { await axios.post(proxyUrls.featuredUrl, request); return true } catch (error) { throw error } } }, getters: { sections: (state: State) => state.sections, getDesignsByName: (state: State) => (name: string) => { const val = _.find(state.masterFeaturedList as AnyObj[], (n: AnyObj) => (n.name as string) === name); return val ? (val.content as AnyObj[]) : [] } } }

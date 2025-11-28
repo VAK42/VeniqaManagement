@@ -1,0 +1,1 @@
+export const attributes = { color: 'Colors', array: 'Array', toggle: 'Toggle' }
